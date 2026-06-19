@@ -1,14 +1,17 @@
 package main
-import(
+
+import (
 	"context"
-	"net/http"
 	"log"
+	"log/slog"
+	"net/http"
 	"os"
-	"time"
 	"os/signal"
 	"syscall"
-	"log/slog"
+	"time"
+
 	"github.com/hafizul16103123/student-api/internal/config"
+	student "github.com/hafizul16103123/student-api/internal/http/handlers"
 )
 func main(){
 	// Load config
@@ -16,10 +19,9 @@ func main(){
 	// Database setup
 	// setup router
 	router:=http.NewServeMux()
-	router.HandleFunc("GET /",func(w http.ResponseWriter ,r *http.Request){
-		w.Write([]byte("Welcome to student API"))
-	})
-		// setup server
+	router.HandleFunc("POST /api/students",student.New())
+
+	// setup server
 	server:=http.Server{
 		Addr:cfg.Addr,
 		Handler:router,
