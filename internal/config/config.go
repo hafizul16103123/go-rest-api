@@ -5,13 +5,12 @@ import(
 	"log"
 	"github.com/ilyakaznacheev/cleanenv"
 )
-
+/*
+	struct tags: `...`
+*/
 type HTTPServer struct{
 	Addr string `yaml:"address" env-required:"true"`
 }
-/*
-struct tags: `...`
-*/
 
 type Config struct{
 	Env string `yaml:"env" env:"ENV" env-default:"production"`
@@ -25,7 +24,7 @@ func MustLoad() *Config {
 	configPath=os.Getenv("CONFIG_PATH")
 
 	if configPath ==""{
-		// flag return pointer, to get data from cmd while run the project
+		// flag return pointer, to get data from cmd(argument or flag,using -name) while run the project
 		flags:=flag.String("config","","Path to the config file")
 		flag.Parse()
 
