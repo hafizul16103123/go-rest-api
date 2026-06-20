@@ -72,3 +72,16 @@ func GetById(storage storage.IStorage) http.HandlerFunc {
 
 	}
 }
+
+func GetStudents(storage storage.IStorage) http.HandlerFunc{
+	return func(w http.ResponseWriter,r *http.Request){
+
+		students,err:=storage.GetStudents()
+		if err!=nil {
+			response.WriteJson(w,http.StatusBadRequest,response.GeneralError(err))
+			return
+		}
+
+		response.WriteJson(w,http.StatusFound,students)
+	}
+}
