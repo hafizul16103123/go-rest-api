@@ -12,14 +12,23 @@ import (
 
 	"github.com/hafizul16103123/student-api/internal/config"
 	student "github.com/hafizul16103123/student-api/internal/http/handlers"
+	"github.com/hafizul16103123/student-api/internal/storage/sqlite"
 )
 func main(){
 	// Load config
 	cfg:=config.MustLoad()
+	slog.Info("Configuration loaded")
 	// Database setup
+	db,err:=sqlite.NewSQLite(cfg)
+	if err!=nil{
+		log.Fatal("Failed to connect to database",err.Error())
+	}
+	slog.Info("Connected to database successfully",slog.String("env",cfg.Env))
+
 	// setup router
 	router:=http.NewServeMux()
-	router.HandleFunc("POST /api/students",student.New())
+	router.HandleFunc("POST /api/students",student.New(db))
+	router.HandleFunc("GET /api/students/{id}",student.GetById(db))
 
 	// setup server
 	server:=http.Server{
@@ -61,7 +70,7 @@ func main(){
 	// 3. Closes connections
 	// 4. Need to provide context timeout because sometimes Shutdown() can hang forever. 
 	//    when context timeout reached then Shutdown cancelled ❌ and error returned.
-	err:=server.Shutdown(ctx)
+	err=server.Shutdown(ctx)
 
 	if err!=nil{
 		slog.Error("Failed to Shutdown server",slog.String("error",err.Error()))
